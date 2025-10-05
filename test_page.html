@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified System Test Page</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .chat-section {
+            background: #f8f9ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .chat-messages {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .message.user {
+            background: #667eea;
+            color: white;
+            margin-left: 20%;
+        }
+
+        .message.assistant {
+            background: #e9ecef;
+            color: #333;
+            margin-right: 20%;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .status-panel {
+            background: #f8f9ff;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .status-panel h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid #0c5460;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Unified System Test Page</h1>
+        <p class="subtitle">Testing the consolidated chat, dashboard, and initialization systems</p>
+
+        <!-- Dashboard Stats -->
+        <div class="dashboard">
+            <div class="stat-card">
+                <div class="stat-value" id="totalPatterns">0</div>
+                <div class="stat-label">Total Patterns</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="systemStatus">⏳</div>
+                <div class="stat-label">System Status</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="inferenceReady">✗</div>
+                <div class="stat-label">Inference Ready</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="lastUpdate">--:--:--</div>
+                <div class="stat-label">Last Update</div>
+            </div>
+        </div>
+
+        <!-- Control Buttons -->
+        <div class="controls">
+            <button onclick="checkStatus()">📊 Check Status</button>
+            <button onclick="addSamplePatterns()">➕ Add Sample Patterns</button>
+            <button onclick="forceUpdate()">🔄 Force Update</button>
+            <button onclick="restartSystem()">🔁 Restart System</button>
+            <button onclick="clearConsole()">🗑️ Clear Console</button>
+        </div>
+
+        <!-- Chat Interface -->
+        <div class="chat-section">
+            <h2>💬 Chat Interface</h2>
+            <div class="info-box">
+                <strong>💡 Test Instructions:</strong>
+                <ol>
+                    <li>First, click "Add Sample Patterns" to load test patterns</li>
+                    <li>Then type a message in the chat below</li>
+                    <li>Watch for notifications in the top-right corner</li>
+                    <li>Check the console (F12) for detailed logs</li>
+                </ol>
+            </div>
+            
+            <div id="chatMessages" class="chat-messages">
+                <div style="text-align: center; padding: 40px; color: #999;">
+                    Chat messages will appear here. Type something below to start!
+                </div>
+            </div>
+
+            <div class="chat-input">
+                <input type="text" id="chatInput" placeholder="Type your message here..." onkeypress="if(event.key==='Enter') sendMessage()">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+
+        <!-- Status Panel -->
+        <div class="status-panel">
+            <h3>🔍 System Status</h3>
+            <pre id="statusOutput">Click "Check Status" to see system information</pre>
+        </div>
+    </div>
+
+    <!-- Core ChatWidget Definition -->
+    <script>
+        // Initialize minimal ChatWidget for testing
+        window.ChatWidget = {
+            processQuery: function(query) {
+                return "Default response (will be overridden by unified system)";
+            }
+        };
+
+        // Initialize pattern database
+        window.patterns = {
+            technology: [],
+            general: []
+        };
+
+        console.log('✅ Core systems initialized (ChatWidget, patterns)');
+    </script>
+
+    <!-- Load Unified System Files -->
+    <!-- IMPORTANT: In your real app, use separate .js files instead of inline scripts -->
+    
+    <!-- Placeholder - In production, load actual unified_chat_system.js -->
+    <script>
+        console.log('ℹ️ In production, load unified_chat_system.js here');
+        console.log('ℹ️ This test page uses minimal inline versions for demonstration');
+        
+        // Minimal inline version for testing
+        (function() {
+            window.UnifiedChatSystem = {
+                state: { initialized: false, conversationHistory: [] },
+                config: { enableNotifications: true },
+                async init() {
+                    this.state.initialized = true;
+                    console.log('✅ Unified Chat System Ready (test mode)');
+                },
+                getAllPatterns() {
+                    const all = [];
+                    if (window.patterns) {
+                        Object.values(window.patterns).forEach(pats => {
+                            if (Array.isArray(pats)) all.push(...pats);
+                        });
+                    }
+                    return all;
+                },
+                getStatus() {
+                    return {
+                        initialized: this.state.initialized,
+                        patternsAvailable: this.getAllPatterns().length,
+                        conversationLength: this.state.conversationHistory.length
+                    };
+                }
+            };
+            UnifiedChatSystem.init();
+        })();
+    </script>
+
+    <!-- Placeholder - In production, load actual unified_dashboard_manager.js -->
+    <script>
+        console.log('ℹ️ In production, load unified_dashboard_manager.js here');
+        
+        // Minimal inline version for testing
+        (function() {
+            window.UnifiedDashboardManager = {
+                state: { initialized: false, updateCount: 0 },
+                intervals: new Map(),
+                async init() {
+                    this.state.initialized = true;
+                    await this.forceUpdate();
+                    console.log('✅ Dashboard Manager Ready (test mode)');
+                },
+                async forceUpdate() {
+                    const patterns = window.UnifiedChatSystem ? 
+                        window.UnifiedChatSystem.getAllPatterns() : [];
+                    
+                    const el = document.getElementById('totalPatterns');
+                    if (el) el.textContent = patterns.length;
+                    
+                    const status = document.getElementById('systemStatus');
+                    if (status) status.textContent = patterns.length > 0 ? '✅ Ready' : '⏳ Waiting';
+                    
+                    const inference = document.getElementById('inferenceReady');
+                    if (inference) inference.textContent = patterns.length > 0 ? '✓' : '✗';
+                    
+                    const lastUpdate = document.getElementById('lastUpdate');
+                    if (lastUpdate) lastUpdate.textContent = new Date().toLocaleTimeString();
+                    
+                    this.state.updateCount++;
+                },
+                getStatus() {
+                    return {
+                        initialized: this.state.initialized,
+                        updateCount: this.state.updateCount
+                    };
+                }
+            };
+            UnifiedDashboardManager.init();
+        })();
+    </script>
+
+    <!-- Placeholder - In production, load actual unified_initialization.js -->
+    <script>
+        console.log('ℹ️ In production, load unified_initialization.js here');
+        
+        // Minimal inline version for testing
+        (function() {
+            window.UnifiedInitCoordinator = {
+                state: { initialized: true },
+                getStatus() {
+                    return {
+                        initialized: this.state.initialized,
+                        systems: {
+                            chat: UnifiedChatSystem.getStatus(),
+                            dashboard: UnifiedDashboardManager.getStatus()
+                        }
+                    };
+                }
+            };
+            console.log('✅ Initialization Coordinator Ready (test mode)');
+            console.log('═'.repeat(60));
+            console.log('✅ ALL SYSTEMS OPERATIONAL (test mode)');
+            console.log('═'.repeat(60));
+        })();
+
+        // Global helper functions
+        window.systemStatus = function() {
+            console.log('📊 System Status:');
+            console.log(window.UnifiedInitCoordinator.getStatus());
+        };
+
+        window.restartSystem = async function() {
+            console.log('🔄 Restarting system...');
+            location.reload();
+        };
+    </script>
+
+    <!-- Test Page Functions -->
+    <script>
+        function addMessage(role, content) {
+            const messagesDiv = document.getElementById('chatMessages');
+            
+            // Clear placeholder
+            if (messagesDiv.children.length === 1 && 
+                messagesDiv.children[0].style.textAlign === 'center') {
+                messagesDiv.innerHTML = '';
+            }
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            messageDiv.textContent = content;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const query = input.value.trim();
+            
+            if (!query) return;
+
+            // Add user message
+            addMessage('user', query);
+            input.value = '';
+
+            // Simulate processing
+            const patterns = window.UnifiedChatSystem.getAllPatterns();
+            
+            let response;
+            if (patterns.length === 0) {
+                response = "No patterns available. Click 'Add Sample Patterns' first!";
+            } else {
+                // Simple pattern matching
+                const match = patterns.find(p => 
+                    p.keywords.some(k => query.toLowerCase().includes(k.toLowerCase()))
+                );
+                
+                if (match) {
+                    response = `Found a match! Pattern: "${match.categoryName}"\n\n`;
+                    if (match.template) {
+                        response += `Template: ${match.template}\n\n`;
+                    }
+                    response += `Keywords: ${match.keywords.join(', ')}`;
+                } else {
+                    response = `I couldn't find a perfect match for "${query}". Available patterns: ${patterns.map(p => p.categoryName).join(', ')}`;
+                }
+            }
+
+            // Add assistant response
+            setTimeout(() => {
+                addMessage('assistant', response);
+            }, 500);
+        }
+
+        function addSamplePatterns() {
+            // Add some test patterns
+            window.patterns.technology = [
+                {
+                    id: 'react-1',
+                    categoryName: 'React Component',
+                    keywords: ['react', 'component', 'jsx', 'hooks'],
+                    template: 'function MyComponent() {\n  return <div>Hello</div>;\n}',
+                    confidence: 0.9
+                },
+                {
+                    id: 'python-1',
+                    categoryName: 'Python Function',
+                    keywords: ['python', 'function', 'def'],
+                    template: 'def my_function(param):\n    return param * 2',
+                    confidence: 0.85
+                }
+            ];
+
+            window.patterns.general = [
+                {
+                    id: 'hello-1',
+                    categoryName: 'Greeting',
+                    keywords: ['hello', 'hi', 'hey', 'greetings'],
+                    template: 'Hello! How can I help you today?',
+                    confidence: 0.95
+                }
+            ];
+
+            console.log('✅ Sample patterns added');
+            forceUpdate();
+            alert('✅ Sample patterns added! Try chatting now.');
+        }
+
+        async function checkStatus() {
+            const status = window.UnifiedInitCoordinator.getStatus();
+            const statusOutput = document.getElementById('statusOutput');
+            statusOutput.textContent = JSON.stringify(status, null, 2);
+            console.log('📊 System Status:', status);
+        }
+
+        async function forceUpdate() {
+            if (window.UnifiedDashboardManager) {
+                await window.UnifiedDashboardManager.forceUpdate();
+                console.log('🔄 Dashboard force updated');
+            }
+        }
+
+        function clearConsole() {
+            console.clear();
+            console.log('🧹 Console cleared');
+        }
+
+        // Initial status check
+        setTimeout(() => {
+            console.log('💡 Test page ready!');
+            console.log('💡 Click "Add Sample Patterns" to load test data');
+            console.log('💡 Use the chat below to test the system');
+        }, 500);
+    </script>
+</body>
+</html>
